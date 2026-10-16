@@ -28,3 +28,38 @@ Add screenshots of the customized login screen here.
 This project modifies the existing ROXOI SDDM theme. Refer to the included `LICENSE` file for the original MIT license and applicable copyright notice.
 
 Further changes and their licensing should be documented as the project evolves.
+
+---## Installation
+
+### 1. Download the theme
+
+Open a terminal and run:
+
+```bash
+git clone https://github.com/smaaqib/roxoi-reimagined-sddm.git
+```
+
+### 2. Install the theme
+
+```bash
+cd roxoi-reimagined-sddm
+sudo mkdir -p /usr/share/sddm/themes/roxoi-reimagined-sddm
+sudo cp -a . /usr/share/sddm/themes/roxoi-reimagined-sddm/
+```
+
+### 3. Enable the theme
+
+Back up your SDDM configuration before changing it. Then configure SDDM to use:
+
+```ini
+[Theme]
+Current=roxoi-reimagined-sddm
+```
+
+The configuration file is commonly `/etc/sddm.conf` or a file under `/etc/sddm.conf.d/`. Make sure you don't create conflicting theme settings.
+
+### 4. Restart
+
+Save your work and reboot to apply the new login theme.
+
+**Important:** SDDM themes can depend on specific Qt/QML modules. If the theme fails to load, switch back to your previous working theme using a recovery terminal or another administrative session.
