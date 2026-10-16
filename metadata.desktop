@@ -1,0 +1,11 @@
+[SddmGreeterTheme]
+Name=ROXOI Custom
+Description=Customized ROXOI animated SDDM login theme
+Author=ROXOI theme contributors
+License=MIT
+Type=sddm-theme
+Version=1.0
+MainScript=Main.qml
+ConfigFile=theme.conf
+Theme-Id=roxoi-sddm-dev
+Theme-API=2.0
