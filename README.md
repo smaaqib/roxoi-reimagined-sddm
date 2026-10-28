@@ -14,7 +14,7 @@ A personalized reworking of the ROXOI SDDM login theme: a looping video backgrou
 
 ## Screenshots
 
-_Coming soon: add `preview.png` to the repo root and embed it here with `![preview](preview.png)`._
+![ROXOI Reimagined login screen](preview.png)
 
 ## Requirements
 
