@@ -1,11 +1,12 @@
 // Components/VirtualKeyboard.qml — ROXOI SDDM Theme
 
-import QtQuick 2.11
-import QtQuick.VirtualKeyboard 2.1
+import QtQuick
+import QtQuick.VirtualKeyboard
 
 InputPanel {
     id: inputPanel
 
+    property bool activated: false
     externalLanguageSwitchEnabled: true
 
     states: State {

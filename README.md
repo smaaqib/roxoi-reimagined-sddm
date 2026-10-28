@@ -7,6 +7,7 @@ A personalized reworking of the ROXOI SDDM login theme: a looping video backgrou
 - Enlarged clock for better visibility.
 - Removed the logo and greeting text.
 - Removed the animated vertical crack effect.
+- Qt6 support (the default), with the Qt5 version kept in `qt5/`.
 - Static-image fallback under the video, so a video failure never leaves a blank screen.
 - New `theme.conf` options: `UseVideo`, `ShowQuotes`, `CustomQuotes`.
 - `install.sh` and `test.sh` helper scripts.
@@ -17,15 +18,24 @@ _Coming soon: add `preview.png` to the repo root and embed it here with `![previ
 
 ## Requirements
 
-**Qt5 only for now.** This theme uses Qt5 QML modules, so it needs a Qt5 build of SDDM (0.20 or older). On SDDM 0.21 and newer, which ships a Qt6 greeter, the theme fails to load with `module "QtGraphicalEffects" is not installed` and SDDM falls back to its default theme. Qt6 support is not available yet.
+SDDM 0.21 and newer use Qt6. SDDM 0.20 and older (for example Ubuntu 24.04) use Qt5. This repo supports both:
 
-You need SDDM (Qt5 greeter) plus these Qt5 modules:
+* **Qt6** (default): the QML files in the repo root.
+* **Qt5**: the same theme in `qt5/`. `install.sh` and `test.sh` pick the right one for the installed greeter, or you can force it with `THEME_QT=5` or `THEME_QT=6`.
+
+Qt6 SDDM needs these QML modules:
 
 | Debian / Ubuntu / Kali | Arch |
 | --- | --- |
+| `qml6-module-qtquick-controls`, `qml6-module-qtquick-layouts`, `qml6-module-qt5compat-graphicaleffects`, `qml6-module-qtmultimedia`, `qml6-module-qtquick-virtualkeyboard` | `qt6-5compat`, `qt6-multimedia`, `qt6-svg`, `qt6-virtualkeyboard` |
+
+Qt5 SDDM needs these instead:
+
+| Debian / Ubuntu | Arch |
+| --- | --- |
 | `qml-module-qtquick-controls2`, `qml-module-qtquick-layouts`, `qml-module-qtgraphicaleffects`, `qml-module-qtmultimedia`, `qml-module-qtquick-virtualkeyboard` | `qt5-quickcontrols2`, `qt5-graphicaleffects`, `qt5-multimedia`, `qt5-svg` |
 
-The video also needs a working GStreamer H.264 decoder (`gstreamer1.0-libav` on Debian-based systems, `gst-libav` on Arch). Without it, set `UseVideo="false"` (see below) and the theme shows the static background instead.
+On Qt5 the video also needs a GStreamer H.264 decoder (`gstreamer1.0-libav` on Debian based systems, `gst-libav` on Arch). Qt6 bundles its own FFmpeg backend. If the video does not play, set `UseVideo="false"` (see below) and the theme shows the static background instead.
 
 ## Installation
 
@@ -39,19 +49,28 @@ cd roxoi-reimagined-sddm
 
 The script copies the theme to `/usr/share/sddm/themes/roxoi-reimagined-sddm`, writes `/etc/sddm.conf.d/10-roxoi-reimagined-sddm.conf` (backing up any earlier copy), and warns if another config file also sets a theme.
 
+It also sets `InputMethod=` to empty. SDDM 0.21 enables Qt's on screen keyboard by default, and it draws over the login form on laptops and desktops. On a touchscreen, keep it with `sudo KEEP_OSK=1 ./install.sh`.
+
 ### Manual way
 
 ```bash
 sudo mkdir -p /usr/share/sddm/themes/roxoi-reimagined-sddm
 sudo cp -a . /usr/share/sddm/themes/roxoi-reimagined-sddm/
+# Qt5 SDDM only: overlay the Qt5 files
+sudo cp -a qt5/. /usr/share/sddm/themes/roxoi-reimagined-sddm/
 ```
 
 Then set the theme in `/etc/sddm.conf` or a file under `/etc/sddm.conf.d/`:
 
 ```ini
+[General]
+InputMethod=
+
 [Theme]
 Current=roxoi-reimagined-sddm
 ```
+
+`InputMethod=` (empty) turns off the on screen keyboard that SDDM 0.21 enables by default. Leave that part out if you want it.
 
 SDDM selects themes by **folder name**, so `Current=` must match the directory you copied to. Make sure no other file sets a conflicting `Current=`.
 
@@ -61,7 +80,7 @@ SDDM selects themes by **folder name**, so `Current=` must match the directory y
 ./test.sh
 ```
 
-This runs `sddm-greeter --test-mode` in a window.
+This runs the SDDM greeter in test mode in a window. If the on screen keyboard shows up in the preview, that is the SDDM default described above.
 
 ### Apply
 

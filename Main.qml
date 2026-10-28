@@ -1,9 +1,8 @@
 // Main.qml — ROXOI SDDM Theme · Modern Edition
-import QtQuick 2.11
-import QtQuick.Layouts 1.11
-import QtQuick.Controls 2.4
-import QtGraphicalEffects 1.0
-import QtMultimedia 5.12
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import QtMultimedia
 import "Components"
 
 Pane {
@@ -27,7 +26,7 @@ Pane {
     palette.buttonText: config.MainColor
     palette.window:     config.BackgroundColor
     font.family:        config.Font
-    font.pointSize:     config.FontSize !== "" ? config.FontSize : parseInt(height / 80)
+    font.pointSize:     config.FontSize !== "" ? config.FontSize : Math.max(parseInt(height / 80), 1)
     focus: true
 
     // Quotes come from CustomQuotes in theme.conf ("|"-separated) when set,
@@ -148,6 +147,7 @@ Pane {
         Loader {
             id: virtualKeyboard
             source: "Components/VirtualKeyboard.qml"
+            active: config.ForceHideVirtualKeyboardButton !== "true"
             state:  "hidden"
             property bool keyboardActive: item ? item.active : false
             onKeyboardActiveChanged: keyboardActive ? state = "visible" : state = "hidden"
