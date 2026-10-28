@@ -1,27 +1,12 @@
 // Components/Clock.qml — ROXOI SDDM Theme
 
-import QtQuick 2.11
-import QtQuick.Controls 2.4
-import QtGraphicalEffects 1.0
+import QtQuick
+import QtQuick.Controls
 
 Column {
     id: clock
     spacing: 6
     width: parent.width
-    
-
-    // Name + tagline under the logo
-    Label {
-        anchors.horizontalCenter: parent.horizontalCenter
-        font.family:    "Monospace"
-        font.pointSize: root.font.pointSize * 3
-        font.bold:      true
-        color:          "#ff2638"
-        opacity:        0.88
-        text:           ""
-        renderType:     Text.QtRendering
-    }
-
 
     // Time display
     Item {

@@ -1,16 +1,19 @@
 // Main.qml — ROXOI SDDM Theme · Modern Edition
-import QtQuick 2.11
-import QtQuick.Layouts 1.11
-import QtQuick.Controls 2.4
-import QtGraphicalEffects 1.0
-import QtMultimedia 5.12
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import QtMultimedia
 import "Components"
 
 Pane {
     id: root
 
-    height: config.ScreenHeight || Screen.height
-    width:  config.ScreenWidth  || Screen.width
+    height: Screen.height
+    width:  Screen.width
+
+    // theme.conf switches
+    property bool useVideo:  config.UseVideo  !== "false"
+    property bool showQuotes: config.ShowQuotes !== "false"
 
     LayoutMirroring.enabled:         config.ForceRightToLeft == "true"
                                      ? true : Qt.application.layoutDirection === Qt.RightToLeft
@@ -23,10 +26,16 @@ Pane {
     palette.buttonText: config.MainColor
     palette.window:     config.BackgroundColor
     font.family:        config.Font
-    font.pointSize:     config.FontSize !== "" ? config.FontSize : parseInt(height / 80)
+    font.pointSize:     config.FontSize !== "" ? config.FontSize : Math.max(parseInt(height / 80), 1)
     focus: true
 
-    property var hackerQuotes: [
+    // Quotes come from CustomQuotes in theme.conf ("|"-separated) when set,
+    // otherwise from the built-in list below.
+    property var hackerQuotes: config.CustomQuotes
+        ? config.CustomQuotes.split("|").map(function(q) { return "> " + q.trim() })
+        : defaultQuotes
+
+    property var defaultQuotes: [
         "> The quieter you become, the more you are able to hear.",
         "> Security is not a product, but a process.",
         "> The only truly secure system is one that is powered off.",
@@ -86,30 +95,46 @@ Pane {
             z: 0
         }
 
-        // z:1  Looping video background
+        // z:0.5  Static background — always shown, so a failed or disabled
+        //        video (missing gstreamer/codecs) still leaves a themed screen
+        Image {
+            id: staticBackground
+            anchors.fill: parent
+            source: config.Background ? Qt.resolvedUrl(config.Background) : ""
+            fillMode: config.ScaleImageCropped == "false" ? Image.PreserveAspectFit
+                                                           : Image.PreserveAspectCrop
+            asynchronous: true
+            z: 0.5
+        }
+
+        // z:1  Looping video background (set UseVideo="false" for static only)
         Video {
             id: backgroundVideo
             anchors.fill: parent
-            source: Qt.resolvedUrl("Backgrounds/login-background.mp4")
+            source: root.useVideo ? Qt.resolvedUrl("Backgrounds/login-background.mp4") : ""
             fillMode: VideoOutput.PreserveAspectCrop
             loops: MediaPlayer.Infinite
             muted: true
-            autoPlay: true
-            opacity: 0.85
+            autoPlay: root.useVideo
+            // only fade the video in once it is really playing
+            opacity: playbackState === MediaPlayer.PlayingState ? 0.85 : 0
+            visible: root.useVideo && error === MediaPlayer.NoError
             z: 1
         }
 
-        // Right-edge HUD removed.
+        // Optional darkening overlay (DimBackgroundImage in theme.conf)
+        Rectangle {
+            anchors.fill: parent
+            color: "black"
+            opacity: parseFloat(config.DimBackgroundImage) || 0
+            z: 2
+        }
 
         // z:13  Login form — vertically centered in panel
         LoginForm {
             id: form
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
-
-            // nudge down by half the logo+name block height so the
-            // combined logo+form reads as one centered stack
-            //anchors.verticalCenterOffset: (logoCanvas.height + root.font.pointSize * 3.5) * 0.30
 
             width:  parent.width * 0.32
             height: implicitHeight   // let content define its own height
@@ -122,6 +147,7 @@ Pane {
         Loader {
             id: virtualKeyboard
             source: "Components/VirtualKeyboard.qml"
+            active: config.ForceHideVirtualKeyboardButton !== "true"
             state:  "hidden"
             property bool keyboardActive: item ? item.active : false
             onKeyboardActiveChanged: keyboardActive ? state = "visible" : state = "hidden"
@@ -166,6 +192,7 @@ Pane {
 
         // z:14  Quote bar
         Item {
+            visible:                  root.showQuotes
             anchors.bottom:           parent.bottom
             anchors.bottomMargin:     16
             anchors.horizontalCenter: parent.horizontalCenter

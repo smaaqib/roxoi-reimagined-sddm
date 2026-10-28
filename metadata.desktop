@@ -1,11 +1,13 @@
 [SddmGreeterTheme]
-Name=ROXOI Custom
-Description=Customized ROXOI animated SDDM login theme
-Author=ROXOI theme contributors
+Name=ROXOI Reimagined
+Description=Minimal, video-backed SDDM login theme reworked from ROXOI
+Author=smaaqib (based on ROXOI by Rajendra Pancholi)
 License=MIT
 Type=sddm-theme
-Version=1.0
+Version=1.1
+Website=https://github.com/smaaqib/roxoi-reimagined-sddm
+Screenshot=preview.png
 MainScript=Main.qml
 ConfigFile=theme.conf
-Theme-Id=roxoi-sddm-dev
+Theme-Id=roxoi-reimagined-sddm
 Theme-API=2.0

@@ -1,9 +1,9 @@
 // Components/Input.qml — ROXOI SDDM Theme
 
-import QtQuick 2.11
-import QtQuick.Layouts 1.11
-import QtQuick.Controls 2.4
-import QtGraphicalEffects 1.0
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import Qt5Compat.GraphicalEffects
 
 Column {
     id: inputContainer
@@ -336,10 +336,10 @@ Column {
 
         Connections {
             target: sddm
-            onLoginSucceeded: {
+            function onLoginSucceeded() {
                 loginBtnWrapper.isAuthenticating = false
             }
-            onLoginFailed: {
+            function onLoginFailed() {
                 loginBtnWrapper.isAuthenticating = false
             }
         }
